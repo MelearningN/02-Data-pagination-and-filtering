@@ -1,143 +1,128 @@
-const ulPagination = document.querySelector('.link-list')
+const studentsHeader = document.querySelector('.header')
+const studentSearchLabel = document.createElement('studentSearchLabel')
+studentSearchLabel.className = 'student-search'
+const studentSearchInput = document.createElement('input')
+studentSearchInput.type = 'text'
+studentSearchInput.placeholder = 'Search by name...'
+const studentSearchButton = document.createElement('button')
+const imageSearch = document.createElement('img')
+imageSearch.src = 'img/icn-search.svg'
+imageSearch.alt = 'Search icon'
+studentSearchButton.appendChild(imageSearch)
+studentSearchLabel.appendChild(studentSearchInput)
+studentSearchLabel.appendChild(studentSearchButton)
+studentsHeader.appendChild(studentSearchLabel)
+studentSearchInput.addEventListener('input', (e) => {
+    showPage(0, e.target.value)
+})
+const paginatedButtonsList = document.querySelector('.link-list')
+const studentList = document.querySelector('.student-list')
 
-const firstPage = () => {
+// runs only one time in the beginning
+function showFirstPage() {
     showPage(0)
-    let totalButtons = Math.ceil(data.length / 9)
-    addPagination(totalButtons, 1)
-} firstPage()
+    let numberOfPages = Math.ceil(data.length / 9)
+    addPagination(numberOfPages, 1)
+}
 
-function showPage(number, search) {
-    const ul = document.querySelector('.student-list')
-    while (ul.firstChild) {
-        ul.removeChild(ul.lastChild);
+// removes all the child nodes
+function removeChildrenNodes(parentName) {
+    while (parentName.firstChild) {
+        parentName.removeChild(parentName.lastChild);
     }
-    if (search) {
-        let searchArray = data.filter(names => names.name.first.toLowerCase().includes(search) || names.name.last.toLowerCase().includes(search))
-        for (let j = number * 9; j < (number + 1) * 9; j++) {
-            let totalButtons = Math.ceil(searchArray.length / 9)
-            addPagination(totalButtons, 1, search)
-            if (searchArray[j]) {
-                const li = document.createElement('li')
-                li.className = 'student-item cf'
-                const div = document.createElement('div')
-                div.className = 'student-details'
-                const img = document.createElement('img')
-                img.className = 'avatar'
-                img.src = searchArray[j].picture.large
-                img.alt = 'Profile Picture'
-                const h3 = document.createElement('h3')
-                h3.textContent = `${
-                    searchArray[j].name.title
-                } ${
-                    searchArray[j].name.first
-                } ${
-                    searchArray[j].name.last
-                }`
-                const span = document.createElement('span')
-                span.className = 'email'
-                span.textContent = searchArray[j].email
-                const joinedDate = document.createElement('div')
-                joinedDate.className = 'joined-details'
-                const date = document.createElement('span')
-                date.className = 'date'
-                date.textContent = searchArray[j].registered.date
-                div.appendChild(img)
-                div.appendChild(h3)
-                div.appendChild(span)
-                joinedDate.appendChild(date)
-                li.appendChild(div)
-                li.appendChild(joinedDate)
-                ul.appendChild(li)
+}
+
+// creats individual student details card
+function createStudentTiles(studentsArray, i) {
+    const studentListItem = document.createElement('li')
+    studentListItem.className = 'student-item cf'
+    const studentDetails = document.createElement('div')
+    studentDetails.className = 'student-details'
+    const studentAvatar = document.createElement('img')
+    studentAvatar.className = 'avatar'
+    studentAvatar.src = studentsArray[i].picture.large
+    studentAvatar.alt = 'Profile Picture'
+    const studentName = document.createElement('h3')
+    studentName.textContent = `${
+        studentsArray[i].name.title
+    } ${
+        studentsArray[i].name.first
+    } ${
+        studentsArray[i].name.last
+    }`
+    const studentEmail = document.createElement('span')
+    studentEmail.className = 'email'
+    studentEmail.textContent = studentsArray[i].email
+    const studentJoinedDetails = document.createElement('div')
+    studentJoinedDetails.className = 'joined-details'
+    const joinedDate = document.createElement('span')
+    joinedDate.className = 'date'
+    joinedDate.textContent = `Joined ${
+        studentsArray[i].registered.date
+    }`
+    studentDetails.appendChild(studentAvatar)
+    studentDetails.appendChild(studentName)
+    studentDetails.appendChild(studentEmail)
+    studentJoinedDetails.appendChild(joinedDate)
+    studentListItem.appendChild(studentDetails)
+    studentListItem.appendChild(studentJoinedDetails)
+    studentList.appendChild(studentListItem)
+    return studentList
+}
+
+// show students page based on different conditions
+function showPage(pageNumber, searchStudent) {
+    removeChildrenNodes(studentList)
+    if (searchStudent) {
+        let searchArray = data.filter(students => students.name.first.toLowerCase().includes(searchStudent) || students.name.last.toLowerCase().includes(searchStudent))
+        if (searchArray.length > 0) {
+            for (let i = pageNumber * 9; i < (pageNumber + 1) * 9; i++) {
+                let numberOfPages = Math.ceil(searchArray.length / 9)
+                addPagination(numberOfPages, 1, searchStudent)
+                if (searchArray[i]) {
+                    createStudentTiles(searchArray, i)
+                }
             }
+        } else {
+            removeChildrenNodes(paginatedButtonsList)
+            studentList.textContent = 'Sorry no result found!'
         }
     } else {
-        let totalButtons = Math.ceil(data.length / 9)
-        addPagination(totalButtons, 1)
-        for (let i = number * 9; i < (number + 1) * 9; i++) {
+        let numberOfPages = Math.ceil(data.length / 9)
+        addPagination(numberOfPages, 1)
+        for (let i = pageNumber * 9; i < (pageNumber + 1) * 9; i++) {
             if (data[i]) {
-                const li = document.createElement('li')
-                li.className = 'student-item cf'
-                const div = document.createElement('div')
-                div.className = 'student-details'
-                const img = document.createElement('img')
-                img.className = 'avatar'
-                img.src = data[i].picture.large
-                img.alt = 'Profile Picture'
-                const h3 = document.createElement('h3')
-                h3.textContent = `${
-                    data[i].name.title
-                } ${
-                    data[i].name.first
-                } ${
-                    data[i].name.last
-                }`
-                const span = document.createElement('span')
-                span.className = 'email'
-                span.textContent = data[i].email
-                const joinedDate = document.createElement('div')
-                joinedDate.className = 'joined-details'
-                const date = document.createElement('span')
-                date.className = 'date'
-                date.textContent = data[i].registered.date
-                div.appendChild(img)
-                div.appendChild(h3)
-                div.appendChild(span)
-                joinedDate.appendChild(date)
-                li.appendChild(div)
-                li.appendChild(joinedDate)
-                ul.appendChild(li)
+                createStudentTiles(data, i)
             }
         }
-        return ul
     }
 }
 
-
-const nextSteps = (i, e, totalButtons, search) => {
-    showPage(i, search)
-
-    while (ulPagination.firstChild) {
-        ulPagination.removeChild(ulPagination.lastChild);
-    }
-    addPagination(totalButtons, e.target.textContent, search)
+// render next page
+function showNextPage(pageNumber, currentButton, numberOfPages, searchStudent) {
+    showPage(pageNumber, searchStudent)
+    removeChildrenNodes(paginatedButtonsList)
+    addPagination(numberOfPages, currentButton, searchStudent)
 }
 
-function addPagination(totalButtons, butt, search) {
-    while (ulPagination.firstChild) {
-        ulPagination.removeChild(ulPagination.lastChild);
-    }
-    for (let i = 0; i < totalButtons; i++) {
+// adding pagination
+function addPagination(numberOfPages, currentPage, searchStudent) {
+    removeChildrenNodes(paginatedButtonsList)
+    for (let i = 0; i < numberOfPages; i++) {
         const listButton = document.createElement('li')
         const paginationButton = document.createElement('button')
         paginationButton.type = 'button'
         paginationButton.textContent = i + 1
-        if (butt == i + 1) {
+        if (currentPage == i + 1) {
             paginationButton.className = 'active'
         }
         listButton.appendChild(paginationButton)
-        paginationButton.addEventListener('click', (e) => {
-            nextSteps(i, e, totalButtons, search)
+        paginationButton.addEventListener('click', (event) => {
+            showNextPage(i, event.target.textContent, numberOfPages, searchStudent)
         })
-
-        ulPagination.appendChild(listButton)
+        paginatedButtonsList.appendChild(listButton)
     }
-    return ulPagination
+    return paginatedButtonsList
 }
 
-const headerH2 = document.querySelector('.header')
-const label = document.createElement('label')
-label.className = 'student-search'
-const input = document.createElement('input')
-input.type = 'text'
-input.placeholder = 'Search by name...'
-const headerButton = document.createElement('button')
-const imageSearch = document.createElement('img')
-imageSearch.src = 'img/icn-search.svg'
-imageSearch.alt = 'Search icon'
-headerButton.appendChild(imageSearch)
-label.appendChild(input)
-label.appendChild(headerButton)
-headerH2.appendChild(label)
-input.addEventListener('input', (e) => {
-    showPage(0, e.target.value)
-})
+showFirstPage()
